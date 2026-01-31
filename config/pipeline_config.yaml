@@ -1,0 +1,75 @@
+# MRI Preprocessing Pipeline Configuration
+
+# General settings
+general:
+  version: "1.0.0"
+  save_intermediate: true
+  verbose: true
+  parallel_workers: 1
+
+# Output paths
+output:
+  base_dir: "output"
+  save_transforms: true
+  save_probability_maps: true
+
+# Skull stripping configuration
+skull_stripping:
+  enabled: true
+  save_intermediate: true
+  methods:
+    antspynet:
+      enabled: true
+      model: "t1v1"
+    ants:
+      enabled: false
+      threshold: 0.1
+
+# Registration configuration
+registration:
+  enabled: true
+  save_intermediate: true
+  template: "config/templates/MNI152_T1_1mm.nii.gz"
+  methods:
+    syn:
+      enabled: true
+      grad_step: 0.1
+      flow_sigma: 3
+      total_sigma: 0
+    affine:
+      enabled: false
+      metric: "MI"
+    rigid:
+      enabled: false
+
+# Segmentation configuration
+segmentation:
+  enabled: true
+  save_intermediate: true
+  methods:
+    atropos:
+      enabled: true
+      num_classes: 3
+      initialization: "kmeans"
+      mrf_smoothing: 0.2
+      convergence_threshold: 0.0001
+      max_iterations: 5
+
+# ROI extraction configuration
+roi_extraction:
+  enabled: true
+  atlas: "AAL116"
+  atlas_path: "config/templates/AAL116_MNI.nii"
+  statistics:
+    - "mean"
+    - "std"
+    - "volume"
+
+# Quality control configuration
+quality_control:
+  enabled: true
+  generate_report: true
+  thresholds:
+    snr_min: 10.0
+    cnr_min: 5.0
+    registration_mi_min: 0.5

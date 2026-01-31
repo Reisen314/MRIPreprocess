@@ -1,0 +1,12 @@
+# Core dependencies
+pyyaml>=6.0
+numpy>=1.21.0
+pathlib
+
+# Medical image processing
+antspyx>=0.3.2
+antspynet>=0.2.0
+
+# Optional dependencies
+nibabel>=3.2.0
+SimpleITK>=2.1.0
