@@ -2,7 +2,7 @@
 
 # General settings
 general:
-  version: "1.0.0"
+  version: "1.1.0"
   save_intermediate: true
   verbose: true
   parallel_workers: 1
@@ -73,3 +73,9 @@ quality_control:
     snr_min: 10.0
     cnr_min: 5.0
     registration_mi_min: 0.5
+
+# PET processing configuration
+pet_processing:
+  enabled: true
+  registration_type: "Rigid"
+  save_intermediate: true

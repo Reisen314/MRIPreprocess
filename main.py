@@ -13,8 +13,11 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Process single subject
+  # Process single subject (MRI only)
   python main.py --subject sub001 --mri data/sub001_T1.nii.gz
+  
+  # Process with PET
+  python main.py --subject sub001 --mri data/sub001_T1.nii.gz --pet data/sub001_PET.nii.gz
   
   # Use custom config
   python main.py --subject sub001 --mri data/sub001_T1.nii.gz --config custom_config.yaml
@@ -35,6 +38,12 @@ Examples:
         required=True,
         type=Path,
         help='Path to T1 MRI file (.nii or .nii.gz)'
+    )
+    
+    parser.add_argument(
+        '--pet', '-p',
+        type=Path,
+        help='Path to PET image (optional, will be registered to MRI)'
     )
     
     parser.add_argument(
@@ -81,6 +90,7 @@ def main():
         result = pipeline.run(
             subject_id=args.subject,
             mri_path=args.mri,
+            pet_path=args.pet,
             output_dir=args.output
         )
         

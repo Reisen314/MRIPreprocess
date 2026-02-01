@@ -16,13 +16,14 @@ class ProcessingData:
     Separates native and template space data to prevent spatial mismatches.
     """
     
-    def __init__(self, primary_image, subject_id: str):
+    def __init__(self, primary_image, subject_id: str, pet_image=None):
         """
         Initialize processing data container.
         
         Args:
             primary_image: Initial image in native space (ANTs Image)
             subject_id: Subject identifier
+            pet_image: Optional PET image (ANTs Image)
         """
         self.subject_id = subject_id
         
@@ -35,6 +36,14 @@ class ProcessingData:
             "gm_probability": None,
             "wm_probability": None,
             "csf_probability": None,
+        }
+        
+        # PET data (secondary modality, depends on MRI)
+        self.pet = {
+            "original": pet_image,           # Original PET image
+            "registered_to_mri": None,       # Registered to MRI native space
+            "skull_stripped": None,          # After applying MRI brain mask
+            "mni": None,                     # In MNI standard space
         }
         
         # Template space (standardized space after registration)

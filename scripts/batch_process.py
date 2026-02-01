@@ -19,8 +19,11 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Process all subjects in a directory
+  # Process all MRI subjects in a directory
   python scripts/batch_process.py --input data/ --pattern "*_T1.nii.gz"
+  
+  # Process MRI + PET
+  python scripts/batch_process.py --input data/ --pattern "*_T1.nii.gz" --pet-pattern "*_PET.nii.gz"
   
   # Use subject list file
   python scripts/batch_process.py --subject-list subjects.txt --input data/
@@ -37,7 +40,12 @@ Examples:
     parser.add_argument(
         '--pattern', '-p',
         default='*.nii.gz',
-        help='File pattern to match (default: *.nii.gz)'
+        help='File pattern to match MRI files (default: *.nii.gz)'
+    )
+    
+    parser.add_argument(
+        '--pet-pattern',
+        help='File pattern to match PET files (optional)'
     )
     
     parser.add_argument(
@@ -63,12 +71,13 @@ Examples:
 
 
 def find_subjects(input_dir: Path, pattern: str, 
-                 subject_list: Path = None) -> List[Tuple[str, Path]]:
+                 pet_pattern: str = None,
+                 subject_list: Path = None) -> List[Tuple[str, Path, Path]]:
     """
     Find subjects to process.
     
     Returns:
-        List of (subject_id, mri_path) tuples
+        List of (subject_id, mri_path, pet_path) tuples
     """
     subjects = []
     
@@ -78,18 +87,35 @@ def find_subjects(input_dir: Path, pattern: str,
             subject_ids = [line.strip() for line in f if line.strip()]
         
         for subject_id in subject_ids:
-            # Try to find matching file
-            matches = list(input_dir.glob(f"*{subject_id}*{pattern}"))
-            if matches:
-                subjects.append((subject_id, matches[0]))
+            # Try to find matching MRI file
+            mri_matches = list(input_dir.glob(f"*{subject_id}*{pattern}"))
+            if mri_matches:
+                mri_path = mri_matches[0]
+                
+                # Try to find matching PET file
+                pet_path = None
+                if pet_pattern:
+                    pet_matches = list(input_dir.glob(f"*{subject_id}*{pet_pattern}"))
+                    if pet_matches:
+                        pet_path = pet_matches[0]
+                
+                subjects.append((subject_id, mri_path, pet_path))
             else:
-                print(f"Warning: No file found for subject {subject_id}")
+                print(f"Warning: No MRI file found for subject {subject_id}")
     else:
-        # Find all matching files
+        # Find all matching MRI files
         for mri_path in input_dir.glob(pattern):
             # Extract subject ID from filename
             subject_id = mri_path.stem.replace('.nii', '')
-            subjects.append((subject_id, mri_path))
+            
+            # Try to find matching PET file
+            pet_path = None
+            if pet_pattern:
+                pet_matches = list(input_dir.glob(f"*{subject_id}*{pet_pattern}"))
+                if pet_matches:
+                    pet_path = pet_matches[0]
+            
+            subjects.append((subject_id, mri_path, pet_path))
     
     return subjects
 
@@ -108,7 +134,7 @@ def main():
         return 1
     
     # Find subjects
-    subjects = find_subjects(args.input, args.pattern, args.subject_list)
+    subjects = find_subjects(args.input, args.pattern, args.pet_pattern, args.subject_list)
     
     if not subjects:
         print("Error: No subjects found")
@@ -128,14 +154,18 @@ def main():
     results = []
     failed = []
     
-    for i, (subject_id, mri_path) in enumerate(subjects, 1):
+    for i, (subject_id, mri_path, pet_path) in enumerate(subjects, 1):
         print(f"\n[{i}/{len(subjects)}] Processing: {subject_id}")
+        if pet_path:
+            print(f"  MRI: {mri_path.name}")
+            print(f"  PET: {pet_path.name}")
         print("-" * 60)
         
         try:
             result = pipeline.run(
                 subject_id=subject_id,
                 mri_path=mri_path,
+                pet_path=pet_path,
                 output_dir=args.output
             )
             results.append((subject_id, result))

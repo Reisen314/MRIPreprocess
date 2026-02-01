@@ -8,6 +8,7 @@ from .registration import Registration
 from .segmentation import Segmentation
 from .roi_extraction import ROIExtraction
 from .quality_control import QualityControl
+from .pet_processor import PETProcessor
 
 __all__ = [
     'ProcessingData',
@@ -16,5 +17,6 @@ __all__ = [
     'Registration',
     'Segmentation',
     'ROIExtraction',
-    'QualityControl'
+    'QualityControl',
+    'PETProcessor'
 ]

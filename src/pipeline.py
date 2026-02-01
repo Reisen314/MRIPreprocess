@@ -90,9 +90,17 @@ class PreprocessingPipeline:
                 self.config['quality_control']
             )
         
+        # Initialize PET processor if enabled
+        if self.config.get('pet_processing', {}).get('enabled', False):
+            from .preprocessing.pet_processor import PETProcessor
+            self.processors['pet_processing'] = PETProcessor(
+                self.config['pet_processing']
+            )
+        
         print(f"Enabled processors: {list(self.processors.keys())}")
     
     def run(self, subject_id: str, mri_path: Union[str, Path], 
+            pet_path: Union[str, Path] = None,
             output_dir: Path = None) -> ProcessingData:
         """
         Run the complete preprocessing pipeline on a subject.
@@ -100,6 +108,7 @@ class PreprocessingPipeline:
         Args:
             subject_id: Subject identifier
             mri_path: Path to input MRI image
+            pet_path: Optional path to input PET image
             output_dir: Optional custom output directory
             
         Returns:
@@ -121,8 +130,19 @@ class PreprocessingPipeline:
         original_image = ants.image_read(str(mri_path))
         print(f"Image shape: {original_image.shape}")
         
+        # Load PET image (optional)
+        pet_image = None
+        if pet_path is not None:
+            pet_path = Path(pet_path)
+            if pet_path.exists():
+                print(f"Loading PET: {pet_path.name}")
+                pet_image = ants.image_read(str(pet_path))
+                print(f"PET shape: {pet_image.shape}")
+            else:
+                print(f"Warning: PET file not found: {pet_path}")
+        
         # Initialize data container
-        data = ProcessingData(original_image, subject_id)
+        data = ProcessingData(original_image, subject_id, pet_image)
         
         # Setup output directories
         if output_dir is None:
@@ -137,6 +157,7 @@ class PreprocessingPipeline:
             'skull_stripping',
             'segmentation',      # Moved before registration
             'registration',
+            'pet_processing',    # PET processing after registration
             'roi_extraction',
             'quality_control'
         ]
@@ -244,6 +265,17 @@ class PreprocessingPipeline:
                 np.save(str(path), feature_array)
                 print(f"  Saved: {path.name}")
         
+        # Save PET results
+        if data.pet["mni"] is not None:
+            path = final_dir / f"{subject_id}_PET_MNI.nii.gz"
+            data.pet["mni"].to_file(str(path))
+            print(f"  Saved: {path.name}")
+        
+        if data.pet["skull_stripped"] is not None:
+            path = final_dir / f"{subject_id}_PET_skull_stripped.nii.gz"
+            data.pet["skull_stripped"].to_file(str(path))
+            print(f"  Saved: {path.name}")
+        
         # Save final summary
         summary_path = final_dir / f"{subject_id}_final_summary.txt"
         with open(summary_path, 'w') as f:
@@ -261,6 +293,11 @@ class PreprocessingPipeline:
             f.write(f"WM Probability: {subject_id}_WM_probability_MNI.nii.gz\n")
             f.write(f"CSF Probability: {subject_id}_CSF_probability_MNI.nii.gz\n")
             f.write(f"Segmentation: {subject_id}_segmentation_MNI.nii.gz\n")
+            
+            if data.pet["mni"] is not None:
+                f.write(f"\nPET Results:\n")
+                f.write(f"PET MNI: {subject_id}_PET_MNI.nii.gz\n")
+                f.write(f"PET Skull-stripped: {subject_id}_PET_skull_stripped.nii.gz\n")
             
             if data.template.get("roi_features"):
                 f.write(f"\nROI Features:\n")
