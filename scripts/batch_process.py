@@ -95,7 +95,9 @@ def find_subjects(input_dir: Path, pattern: str,
                 # Try to find matching PET file
                 pet_path = None
                 if pet_pattern:
-                    pet_matches = list(input_dir.glob(f"*{subject_id}*{pet_pattern}"))
+                    # Build search pattern, avoiding double wildcards
+                    pet_search_pattern = f"*{subject_id}*" + pet_pattern.lstrip('*')
+                    pet_matches = list(input_dir.glob(pet_search_pattern))
                     if pet_matches:
                         pet_path = pet_matches[0]
                 
@@ -106,12 +108,24 @@ def find_subjects(input_dir: Path, pattern: str,
         # Find all matching MRI files
         for mri_path in input_dir.glob(pattern):
             # Extract subject ID from filename
-            subject_id = mri_path.stem.replace('.nii', '')
+            # Remove .nii.gz or .nii extension first
+            filename = mri_path.name
+            if filename.endswith('.nii.gz'):
+                filename = filename[:-7]
+            elif filename.endswith('.nii'):
+                filename = filename[:-4]
+            
+            # Extract subject ID (remove modality suffix like _T1, _PET)
+            # Assume subject ID is everything before the last underscore
+            parts = filename.rsplit('_', 1)
+            subject_id = parts[0] if len(parts) > 1 else filename
             
             # Try to find matching PET file
             pet_path = None
             if pet_pattern:
-                pet_matches = list(input_dir.glob(f"*{subject_id}*{pet_pattern}"))
+                # Build search pattern, avoiding double wildcards
+                pet_search_pattern = f"*{subject_id}*" + pet_pattern.lstrip('*')
+                pet_matches = list(input_dir.glob(pet_search_pattern))
                 if pet_matches:
                     pet_path = pet_matches[0]
             
