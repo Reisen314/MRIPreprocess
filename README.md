@@ -29,7 +29,7 @@ git clone https://github.com/Reisen314/MRIPreprocess.git
 cd MRIPreprocess
 
 # 安装依赖
-pip install antspyx antspynet pyyaml numpy
+pip install requirements.txt
 ```
 
 ### 准备模板文件
