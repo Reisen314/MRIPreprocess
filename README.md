@@ -1,25 +1,25 @@
 # MRI 预处理管道
 
-> 基于 ANTs/ANTsPyNet 的医学图像预处理系统，采用空间分离架构和配置驱动设计，支持 MRI 和 PET 多模态处理
+基于 ANTs/ANTsPyNet 的医学图像预处理系统，采用空间分离架构和配置驱动设计，支持 MRI 和 PET 多模态处理。
 
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 ---
 
-## ✨ 特性
+## 特性
 
-- 🧠 **完整的预处理流程** - 从原始 T1 MRI 到 ROI 特征提取
-- 🔬 **多模态支持** - 支持 MRI + PET 联合处理（v1.1+）
-- 🏗️ **空间分离架构** - 明确区分 Native 和 Template 空间，防止空间混用
-- ⚙️ **配置驱动** - 通过 YAML 文件灵活控制所有处理参数
-- 📦 **模块化设计** - 统一的数据容器和处理器接口
-- 🎯 **自动分类输出** - 中间结果、最终结果、质量报告分类存储
-- 🔧 **灵活扩展** - 支持多种算法和参数配置
+- 完整的预处理流程：从原始 T1 MRI 到 ROI 特征提取
+- 多模态支持：支持 MRI + PET 联合处理（v1.1+）
+- 空间分离架构：明确区分 Native 和 Template 空间，防止空间混用
+- 配置驱动：通过 YAML 文件灵活控制所有处理参数
+- 模块化设计：统一的数据容器和处理器接口
+- 自动分类输出：中间结果、最终结果、质量报告分类存储
+- 灵活扩展：支持多种算法和参数配置
 
 ---
 
-## 🚀 快速开始
+## 快速开始
 
 ### 安装
 
@@ -59,7 +59,7 @@ python scripts/batch_process.py --input data/ --pattern "*_T1.nii.gz" --pet-patt
 
 ---
 
-## 📋 处理流程
+## 处理流程
 
 ### MRI 处理流程
 
@@ -111,7 +111,7 @@ PET 在 MNI 标准空间
 
 ---
 
-## 📁 输出结构
+## 输出结构
 
 ### MRI Only 模式
 
@@ -166,15 +166,15 @@ output/
     └── logs/
 ```
 
-**💡 使用建议：**
-- 用于分析：使用 `final/` 目录中的 MNI 空间文件
-- 用于调试：检查 `intermediate/` 目录中的中间结果
-- 质量检查：查看 `qc/` 目录中的报告
-- PET 分析：使用 `final/sub001_PET_MNI.nii.gz`，与 MRI 完美对齐
+**使用建议**：
+- 用于分析：使用 final/ 目录中的 MNI 空间文件
+- 用于调试：检查 intermediate/ 目录中的中间结果
+- 质量检查：查看 qc/ 目录中的报告
+- PET 分析：使用 final/sub001_PET_MNI.nii.gz，与 MRI 完美对齐
 
 ---
 
-## ⚙️ 配置
+## 配置
 
 主配置文件：`config/pipeline_config.yaml`
 
@@ -224,7 +224,7 @@ quality_control:
 
 ---
 
-## 🧪 测试
+## 测试
 
 ```bash
 # 测试配置加载和 Pipeline 初始化
@@ -236,7 +236,7 @@ python test_base_processor.py
 
 ---
 
-## 📚 文档
+## 文档
 
 | 文档 | 说明 |
 |------|------|
@@ -250,7 +250,7 @@ python test_base_processor.py
 
 ---
 
-## 🏗️ 项目结构
+## 项目结构
 
 ```
 MRIPreprocess/
@@ -288,7 +288,7 @@ MRIPreprocess/
 
 ---
 
-## 🔑 核心概念
+## 核心概念
 
 ### 空间分离架构
 
@@ -314,11 +314,11 @@ ProcessingData:
     - template_to_native
 ```
 
-**优势：**
-- ✅ 防止空间混用错误
-- ✅ 明确数据所在空间
-- ✅ 支持双向工作流
-- ✅ 支持多模态数据管理
+**优势**：
+- 防止空间混用错误
+- 明确数据所在空间
+- 支持双向工作流
+- 支持多模态数据管理
 
 ### PET 处理原理（v1.1+）
 
@@ -333,14 +333,14 @@ PET 处理依赖 MRI 处理结果，确保空间对齐：
 PET_mni = Transform_mri→mni(Transform_pet→mri(PET_original))
 ```
 
-**优势：**
+**优势**：
 - 保证 PET 和 MRI 在 MNI 空间完美对齐
 - 避免重复计算配准
 - 复用 MRI 的脑掩膜和变换场
 
 ---
 
-## 📊 性能
+## 性能
 
 **典型处理时间**（单个样本）：
 
@@ -360,19 +360,19 @@ PET_mni = Transform_mri→mni(Transform_pet→mri(PET_original))
 
 ---
 
-## ❓ 常见问题
+## 常见问题
 
 ### 模板文件未找到
 ```
 FileNotFoundError: Template file not found
 ```
-**解决：** 参考 [SETUP_TEMPLATES.md](SETUP_TEMPLATES.md) 下载模板文件
+**解决**：参考 [SETUP_TEMPLATES.md](SETUP_TEMPLATES.md) 下载模板文件
 
 ### 空间不匹配错误
 ```
 ValueError: operands could not be broadcast together
 ```
-**解决：** ✅ 已修复！使用最新版本的空间分离架构
+**解决**：已修复！使用最新版本的空间分离架构
 
 ### PET 处理相关问题
 
@@ -390,7 +390,7 @@ A: 不可以。PET 处理依赖 MRI 处理结果，必须同时提供 MRI。
 
 ---
 
-## 🛠️ 开发
+## 开发
 
 ### 添加新的处理器
 
@@ -405,20 +405,20 @@ A: 不可以。PET 处理依赖 MRI 处理结果，必须同时提供 MRI。
 
 ---
 
-## 📝 版本历史
+## 版本历史
 
 - **v1.1.0** (2024-02) - 添加 PET 多模态支持
 - **v1.0.0** (2024-01) - 初始版本，MRI 预处理管道
 
 ---
 
-## 📄 许可证
+## 许可证
 
 MIT License
 
 ---
 
-## 🙏 致谢
+## 致谢
 
 本项目融合了以下项目的优秀设计：
 - **MDL-Net** - 先进的技术栈
@@ -426,7 +426,7 @@ MIT License
 
 ---
 
-## 📮 联系
+## 联系
 
 如有问题或建议，请提交 Issue。
 

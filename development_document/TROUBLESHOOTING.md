@@ -55,7 +55,7 @@ ValueError: operands could not be broadcast together with shapes (182,218,182) (
 **原因：** 图像和掩膜在不同空间
 
 **解决方案：** 
-✅ 已修复！使用最新的空间分离架构，这个问题已经解决。
+已修复！使用最新的空间分离架构，这个问题已经解决。
 
 ---
 
@@ -122,7 +122,7 @@ Atropos exited with non-zero status
 ```
 
 **解决方案：**
-✅ 已有 fallback 机制！会自动切换到简单分割方法。
+已有 fallback 机制！会自动切换到简单分割方法。
 
 如果仍然失败，检查：
 1. 脑提取是否成功（brain_mask 是否正确）
