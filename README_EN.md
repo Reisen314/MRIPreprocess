@@ -2,6 +2,10 @@
 
 > Medical image preprocessing system based on ANTs/ANTsPyNet with space-aware architecture and configuration-driven design, supporting MRI and PET multimodal processing
 
+
+[![中文](https://img.shields.io/badge/🇨🇳_中文-Available-blue)](README.md)
+[![English](https://img.shields.io/badge/🇺🇸_English-Current-green)](README_EN.md)
+
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 

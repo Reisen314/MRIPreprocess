@@ -2,6 +2,10 @@
 
 基于 ANTs/ANTsPyNet 的医学图像预处理系统，采用空间分离架构和配置驱动设计，支持 MRI 和 PET 多模态处理。
 
+
+[![中文](https://img.shields.io/badge/🇨🇳_中文-Current-blue)](README.md)
+[![English](https://img.shields.io/badge/🇺🇸_English-Availalbe-green)](README_EN.md)
+
 [![Python](https://img.shields.io/badge/Python-3.7+-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
